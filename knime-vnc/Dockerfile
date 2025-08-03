@@ -13,6 +13,9 @@ RUN apt-get update && apt-get install -y \
     novnc websockify supervisor x11vnc net-tools \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+RUN apt-get remove -y light-locker xscreensaver || true && \
+    rm -f /etc/xdg/autostart/light-locker.desktop || true
+
 # Install KNIME
 RUN mkdir -p /opt/knime && \
     wget -O /tmp/knime.zip https://download.knime.org/analytics-platform/linux/knime-latest-linux.gtk.x86_64.tar.gz && \
@@ -30,6 +33,8 @@ RUN echo knime | vncpasswd -f > /home/knime/.vnc/passwd && \
 
 # Set noVNC manually
 RUN git clone https://github.com/novnc/noVNC.git /opt/novnc
+RUN echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=vnc.html"></head><body></body></html>' \
+  > /opt/novnc/index.html
 
 # Copy startup script
 COPY start.sh /start.sh
